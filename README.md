@@ -4,9 +4,9 @@ This repo provides a Docker-based development environment for WordPress
 development. Notably, it includes everything necessary for developing themes for
 [WordPress VIP][vip], but it works well for WordPress in general.
 
-- `wordpress/Dockerfile` extends the official WordPress Docker image, adding
-  better defaults, WP-CLI, PHPUnit, Composer, and the WordPress unit testing
-  framework.
+- The [chriszarate/wordpress][image] image extends the official WordPress Docker
+  image, adding better defaults, WP-CLI, PHPUnit, Composer, and the WordPress
+  unit testing suite.
 
 - `lib/Dockerfile` provides plugins specific to the WordPress VIP environment as
   well as some generally useful development plugins. They are completely
@@ -88,4 +88,5 @@ This will output cachegrind files (named after the request URI and timestamp) to
 
 
 [docker-compose]: https://docs.docker.com/compose/
+[image]: https://hub.docker.com/r/chriszarate/wordpress/
 [vip]: https://vip.wordpress.com
