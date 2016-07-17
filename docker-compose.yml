@@ -1,0 +1,51 @@
+version: "2"
+
+services:
+  wordpress:
+    build: "wordpress"
+    environment:
+      PHPUNIT_DB_HOST: "mysql_phpunit"
+      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/project"
+      PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
+      VIRTUAL_HOST: "project.dev"
+      WORDPRESS_ACTIVATE_PLUGINS: "" # "jetpack my-plugin" -- space-separated paths relative to /wp-content/plugins/
+      WORDPRESS_ACTIVATE_THEME: ""   # "vip/my-theme" -- theme path relative to /wp-content/themes/
+      WORDPRESS_CONFIG_EXTRA: "define( 'MY_PROJECT_ENV', 'value' );"
+      WORDPRESS_DB_PASSWORD: "wordpress"
+      WORDPRESS_SITE_TITLE: "Project"
+      WORDPRESS_SITE_URL: "http://project.dev/"
+      XDEBUG_CONFIG: "remote_host=${DOCKER_LOCAL_IP} idekey=xdebug"
+    links:
+      - "mysql"
+      - "mysql_phpunit"
+    volumes:
+      - "lib-plugins:/var/www/html/wp-content/plugins"
+      - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
+      - "./my-plugin:/var/www/html/wp-content/plugins/my-plugin"
+      - "./my-theme:/var/www/html/wp-content/themes/vip/my-theme"
+  mysql:
+    image: "mariadb"
+    environment:
+      MYSQL_DATABASE: "wordpress"
+      MYSQL_ROOT_PASSWORD: "wordpress"
+  mysql_phpunit:
+    image: "mariadb"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "wordpress_phpunit"
+      MYSQL_ROOT_PASSWORD: ""
+  lib:
+    build: "lib"
+    volumes:
+      - "lib-plugins:/usr/local/src/wordpress-plugins"
+      - "lib-vip:/usr/local/src/vip-plugins"
+  proxy:
+    image: "jwilder/nginx-proxy"
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+
+volumes:
+  lib-plugins: {}
+  lib-vip: {}
