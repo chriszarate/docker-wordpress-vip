@@ -48,7 +48,8 @@ docker-compose logs wordpress
 Please refer to the [Docker Compose documentation][docker-compose] for more
 information about starting, stopping, and interacting with your environment.
 
-Log in to `/wp-admin` with `wordpress` / `wordpress`.
+Log in to `/wp-admin` with `wordpress` / `wordpress`. Put project-specific
+config in `conf/wp-local-config.php`, which is synced to the Docker container.
 
 
 ## WP-CLI
