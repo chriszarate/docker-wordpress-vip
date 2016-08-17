@@ -10,24 +10,31 @@ services:
       VIRTUAL_HOST: "project.dev"
       WORDPRESS_ACTIVATE_PLUGINS: "" # "jetpack my-plugin" -- space-separated paths relative to /wp-content/plugins/
       WORDPRESS_ACTIVATE_THEME: ""   # "vip/my-theme" -- theme path relative to /wp-content/themes/
-      WORDPRESS_CONFIG_EXTRA: "define( 'MY_PROJECT_ENV', 'value' );"
-      WORDPRESS_DB_PASSWORD: "wordpress"
       WORDPRESS_SITE_TITLE: "Project"
-      WORDPRESS_SITE_URL: "http://project.dev/"
       XDEBUG_CONFIG: "remote_host=${DOCKER_LOCAL_IP} idekey=xdebug"
     links:
       - "mysql"
       - "mysql_phpunit"
+    depends_on:
+      - "lib"
+      - "mysql"
     volumes:
+      - "lib-config:/var/www/html/config"
+      - "lib-mu-plugins:/var/www/html/wp-content/mu-plugins"
       - "lib-plugins:/var/www/html/wp-content/plugins"
+      - "lib-quickstart:/tmp/quickstart"
       - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
+      - "lib-wp:/tmp/wordpress/latest"
+      - "./conf/wp-local-config.php:/var/www/html/local-config.php"
       - "./my-plugin:/var/www/html/wp-content/plugins/my-plugin"
       - "./my-theme:/var/www/html/wp-content/themes/vip/my-theme"
   mysql:
     image: "mariadb"
     environment:
       MYSQL_DATABASE: "wordpress"
-      MYSQL_ROOT_PASSWORD: "wordpress"
+      MYSQL_USER: "wordpress"
+      MYSQL_PASSWORD: "wordpress"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
   mysql_phpunit:
     image: "mariadb"
     environment:
@@ -37,8 +44,12 @@ services:
   lib:
     build: "lib"
     volumes:
+      - "lib-config:/usr/local/src/quickstart/www/config"
+      - "lib-mu-plugins:/usr/local/src/quickstart/www/wp-content/mu-plugins"
       - "lib-plugins:/usr/local/src/wordpress-plugins"
+      - "lib-quickstart:/usr/local/src/quickstart"
       - "lib-vip:/usr/local/src/vip-plugins"
+      - "lib-wp:/usr/local/src/wordpress-test"
   proxy:
     image: "jwilder/nginx-proxy"
     ports:
@@ -47,5 +58,9 @@ services:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
 
 volumes:
+  lib-config: {}
+  lib-mu-plugins: {}
   lib-plugins: {}
+  lib-quickstart: {}
   lib-vip: {}
+  lib-wp: {}

@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk add --no-cache subversion
+RUN apk add --no-cache git subversion
 
 RUN svn co --quiet --trust-server-cert --non-interactive https://vip-svn.wordpress.com/plugins /usr/local/src/vip-plugins
 
@@ -19,5 +19,9 @@ RUN svn co --quiet --trust-server-cert --non-interactive https://plugins.svn.wor
 RUN svn co --quiet --trust-server-cert --non-interactive https://plugins.svn.wordpress.org/vip-scanner/trunk /usr/local/src/wordpress-plugins/vip-scanner
 
 RUN svn co --quiet --trust-server-cert --non-interactive https://plugins.svn.wordpress.org/wordpress-importer/trunk /usr/local/src/wordpress-plugins/wordpress-importer
+
+RUN svn co --quiet --trust-server-cert --non-interactive https://develop.svn.wordpress.org/trunk /usr/local/src/wordpress-test
+
+RUN git clone https://github.com/Automattic/vip-quickstart.git /usr/local/src/quickstart
 
 CMD /bin/true

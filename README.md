@@ -5,8 +5,7 @@ development. Notably, it includes everything necessary for developing themes for
 [WordPress VIP][vip], but it works well for WordPress in general.
 
 - The [chriszarate/wordpress][image] image extends the official WordPress Docker
-  image, adding better defaults, WP-CLI, PHPUnit, Composer, and the WordPress
-  unit testing suite.
+  image, adding better defaults, WP-CLI, PHPUnit, and Composer.
 
 - `lib/Dockerfile` provides plugins specific to the WordPress VIP environment as
   well as some generally useful development plugins. They are completely
