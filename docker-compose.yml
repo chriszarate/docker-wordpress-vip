@@ -2,7 +2,7 @@ version: "2"
 
 services:
   wordpress:
-    image: "chriszarate/wordpress"
+    build: "wordpress"
     environment:
       PHPUNIT_DB_HOST: "mysql_phpunit"
       PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/project"
