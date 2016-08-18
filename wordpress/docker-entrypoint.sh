@@ -2,15 +2,16 @@
 
 set -ex
 
-# Copy WordPress core.
+# Copy WordPress core, including VIP Quickstart.
 if ! [ -e index.php ] && ! [ -e wp-includes/version.php ]; then
+  tar cf - --one-file-system -C /usr/src/quickstart/www . | tar xf - --owner="$(id -u www-data)" --group="$(id -g www-data)"
   tar cf - --one-file-system -C /usr/src/wordpress . | tar xf - --owner="$(id -u www-data)" --group="$(id -g www-data)"
   echo "WordPress has been successfully copied to $(pwd)"
 fi
 
-# Copy wp-config.php from VIP Quickstart. Remove some of the constants that VIP
-# Quickstart hardcodes. If desired, supply your own values in the local config.
-sed -e '/DB_HOST/d' -e '/WP_DEBUG/d' /tmp/quickstart/www/wp-config.php > wp-config.php
+# Remove some of the constants that VIP Quickstart hardcodes. If desired,
+# supply your own values in the local config.
+sed -i -e '/DB_HOST/d' -e '/SUNRISE/d' -e '/WP_DEBUG/d' wp-config.php
 
 # Update WP-CLI config with current virtual host.
 sed -i -E "s/^url: .*/url: ${VIRTUAL_HOST:-project.dev}/" /etc/wp-cli/config.yml
@@ -32,9 +33,6 @@ wp core multisite-install \
   --admin_password="'${WORDPRESS_SITE_PASSWORD:-wordpress}'" \
   --admin_email="'${WORDPRESS_SITE_EMAIL:-admin@example.com}'" \
   --skip-email
-
-# Copy wp-content files from VIP Quickstart.
-cp /tmp/quickstart/www/wp-content/*.php ./wp-content/
 
 # Activate plugins.
 if [ -n "$WORDPRESS_ACTIVATE_PLUGINS" ]; then

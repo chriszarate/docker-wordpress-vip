@@ -19,10 +19,8 @@ services:
       - "lib"
       - "mysql"
     volumes:
-      - "lib-config:/var/www/html/config"
-      - "lib-mu-plugins:/var/www/html/wp-content/mu-plugins"
       - "lib-plugins:/var/www/html/wp-content/plugins"
-      - "lib-quickstart:/tmp/quickstart"
+      - "lib-quickstart:/usr/src/quickstart"
       - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
       - "lib-wp:/tmp/wordpress/latest"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php"
@@ -44,8 +42,6 @@ services:
   lib:
     build: "lib"
     volumes:
-      - "lib-config:/usr/local/src/quickstart/www/config"
-      - "lib-mu-plugins:/usr/local/src/quickstart/www/wp-content/mu-plugins"
       - "lib-plugins:/usr/local/src/wordpress-plugins"
       - "lib-quickstart:/usr/local/src/quickstart"
       - "lib-vip:/usr/local/src/vip-plugins"
@@ -58,8 +54,6 @@ services:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
 
 volumes:
-  lib-config: {}
-  lib-mu-plugins: {}
   lib-plugins: {}
   lib-quickstart: {}
   lib-vip: {}
