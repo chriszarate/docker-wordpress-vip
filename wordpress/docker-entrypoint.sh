@@ -1,20 +1,17 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -ex
 
 # Copy WordPress core, including VIP Quickstart.
 if ! [ -e index.php ] && ! [ -e wp-includes/version.php ]; then
-  tar cf - --one-file-system -C /usr/src/quickstart/www . | tar xf - --owner="$(id -u www-data)" --group="$(id -g www-data)"
+  tar cf - --one-file-system -C /usr/src/quickstart/www . | tar xf - --exclude="wp-content/object-cache.php" --owner="$(id -u www-data)" --group="$(id -g www-data)"
   tar cf - --one-file-system -C /usr/src/wordpress . | tar xf - --owner="$(id -u www-data)" --group="$(id -g www-data)"
   echo "WordPress has been successfully copied to $(pwd)"
 fi
 
-# Remove some of the constants that VIP Quickstart hardcodes. If desired,
-# supply your own values in the local config.
-sed -i -e '/DB_HOST/d' -e '/SUNRISE/d' -e '/WP_DEBUG/d' wp-config.php
-
-# Update WP-CLI config with current virtual host.
-sed -i -E "s/^url: .*/url: ${VIRTUAL_HOST:-project.dev}/" /etc/wp-cli/config.yml
+# Remove some of the constants that VIP Quickstart hardcodes. If desired, supply
+# your own values in the local config.
+sed -i -e '/DB_HOST/d' -e '/WP_DEBUG/d' wp-config.php
 
 # MySQL may not be ready when container starts.
 set +ex
@@ -44,11 +41,14 @@ if [ -n "$WORDPRESS_ACTIVATE_THEME" ]; then
   wp theme activate "$WORDPRESS_ACTIVATE_THEME"
 fi
 
+# Update WP-CLI config with current virtual host.
+sed -i -E "s/^url: .*/url: ${VIRTUAL_HOST:-project.dev}/" /etc/wp-cli/config.yml
+
 # Setup PHPUnit.
-if [ -f /tmp/wordpress/latest/wp-tests-config-sample.php ] && [ -n "$PHPUNIT_DB_HOST" ]; then
+if [ -f /tmp/wordpress/latest/wp-tests-config-sample.php ]; then
   sed \
     -e "s/.*ABSPATH.*/define( 'ABSPATH', getenv('WP_ABSPATH') );/" \
-    -e "s/.*DB_HOST.*/define( 'DB_HOST', '${PHPUNIT_DB_HOST:-localhost}' );/" \
+    -e "s/.*DB_HOST.*/define( 'DB_HOST', '${PHPUNIT_DB_HOST:-mysql_phpunit}' );/" \
     -e "s/.*DB_NAME.*/define( 'DB_NAME', '${PHPUNIT_DB_NAME:-wordpress_phpunit}' );/" \
     -e "s/.*DB_USER.*/define( 'DB_USER', '${PHPUNIT_DB_USER:-root}' );/" \
     -e "s/.*DB_PASSWORD.*/define( 'DB_PASSWORD', '$PHPUNIT_DB_PASSWORD' );/" \

@@ -2,28 +2,29 @@ version: "2"
 
 services:
   wordpress:
-    build: "wordpress"
+    build:
+      context: "."
+      dockerfile: "wordpress/Dockerfile"
     environment:
-      PHPUNIT_DB_HOST: "mysql_phpunit"
       PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/project"
       PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
-      VIRTUAL_HOST: "project.dev"
+      VIRTUAL_HOST: "${DOCKER_DEV_DOMAIN}"
       WORDPRESS_ACTIVATE_PLUGINS: "" # "jetpack my-plugin" -- space-separated paths relative to /wp-content/plugins/
       WORDPRESS_ACTIVATE_THEME: ""   # "vip/my-theme" -- theme path relative to /wp-content/themes/
       WORDPRESS_SITE_TITLE: "Project"
       XDEBUG_CONFIG: "remote_host=${DOCKER_LOCAL_IP} idekey=xdebug"
-    links:
-      - "mysql"
-      - "mysql_phpunit"
     depends_on:
       - "lib"
       - "mysql"
+    networks:
+      - "front"
+      - "back"
     volumes:
       - "lib-plugins:/var/www/html/wp-content/plugins"
       - "lib-quickstart:/usr/src/quickstart"
       - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
       - "lib-wp:/tmp/wordpress/latest"
-      - "./conf/wp-local-config.php:/var/www/html/local-config.php"
+      - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
       - "./my-plugin:/var/www/html/wp-content/plugins/my-plugin"
       - "./my-theme:/var/www/html/wp-content/themes/vip/my-theme"
   mysql:
@@ -33,14 +34,22 @@ services:
       MYSQL_USER: "wordpress"
       MYSQL_PASSWORD: "wordpress"
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    networks:
+      - "back"
   mysql_phpunit:
     image: "mariadb"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: "wordpress_phpunit"
       MYSQL_ROOT_PASSWORD: ""
+    networks:
+      - "back"
   lib:
-    build: "lib"
+    build:
+      context: "."
+      dockerfile: "lib/Dockerfile"
+    networks:
+      - "front"
     volumes:
       - "lib-plugins:/usr/local/src/wordpress-plugins"
       - "lib-quickstart:/usr/local/src/quickstart"
@@ -50,8 +59,16 @@ services:
     image: "jwilder/nginx-proxy"
     ports:
       - "80:80"
+    networks:
+      front:
+        aliases:
+          - "${DOCKER_DEV_DOMAIN}"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
+
+networks:
+  front: {}
+  back: {}
 
 volumes:
   lib-plugins: {}

@@ -4,8 +4,9 @@ This repo provides a Docker-based development environment for WordPress
 development. Notably, it includes everything necessary for developing themes for
 [WordPress VIP][vip], but it works well for WordPress in general.
 
-- The [chriszarate/wordpress][image] image extends the official WordPress Docker
-  image, adding better defaults, WP-CLI, PHPUnit, and Composer.
+- The [chriszarate/wordpress][image] image runs on PHP7. It generally follows
+  the approach of the official WordPress Docker image and adds better defaults,
+  WP-CLI, PHPUnit, Composer, Xdebug, and the WordPress unit testing suite.
 
 - `lib/Dockerfile` provides plugins specific to the WordPress VIP environment as
   well as some generally useful development plugins. They are completely
@@ -19,7 +20,8 @@ development. Notably, it includes everything necessary for developing themes for
 
 1. Put your theme and/or plugin in the root of this folder and adjust the 
    `services/wordpress/volumes` section of `docker-compose.yml` so that they
-   sync to the WordPress container.
+   sync to the WordPress container. Additionally edit `.dockerignore` to exclude
+   those directories.
 
    If you would like your theme or plugin activated when the container starts,
    edit the `WORDPRESS_ACTIVATE_PLUGINS` and/or `WORDPRESS_ACTIVATE_THEME`
@@ -30,6 +32,8 @@ development. Notably, it includes everything necessary for developing themes for
 ```
 127.0.0.1 localhost project.dev
 ```
+
+  If you choose a different hostname, edit `.env` as well.
 
 
 ## Start environment

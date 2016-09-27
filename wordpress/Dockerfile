@@ -1,5 +1,3 @@
 FROM chriszarate/wordpress
 
-COPY docker-entrypoint.sh /entrypoint.sh
-
-RUN chmod +x /entrypoint.sh
+COPY wordpress/docker-entrypoint.sh /entrypoint.sh
