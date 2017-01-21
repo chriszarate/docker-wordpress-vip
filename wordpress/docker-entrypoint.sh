@@ -9,6 +9,12 @@ if ! [ -e index.php ] && ! [ -e wp-includes/version.php ]; then
   echo "WordPress has been successfully copied to $(pwd)"
 fi
 
+# Seed wp-content directory if requested.
+if [ -d /tmp/wordpress/init-wp-content ]; then
+  tar cf - --one-file-system -C /tmp/wordpress/init-wp-content . | tar xf - -C ./wp-content --owner="$(id -u www-data)" --group="$(id -g www-data)"
+  echo "Seeded wp-content directory from /tmp/wordpress/init-wp-content."
+fi
+
 # Remove some of the constants that VIP Quickstart hardcodes. If desired, supply
 # your own values in the local config.
 sed -i -e '/DB_HOST/d' -e '/WP_DEBUG/d' wp-config.php
