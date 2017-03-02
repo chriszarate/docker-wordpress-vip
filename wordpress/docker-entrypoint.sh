@@ -41,7 +41,7 @@ wp core multisite-install \
   --skip-email
 
 # Update rewrite structure.
-wp option update permalink_structure '/%year%/%monthnum%/%postname%'
+wp option update permalink_structure '/%year%/%monthnum%/%postname%' --skip-themes --skip-plugins
 
 # Activate plugins.
 if [ -n "$WORDPRESS_ACTIVATE_PLUGINS" ]; then
