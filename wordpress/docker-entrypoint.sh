@@ -40,6 +40,9 @@ wp core multisite-install \
   --admin_email="'${WORDPRESS_SITE_EMAIL:-admin@example.com}'" \
   --skip-email
 
+# Update rewrite structure.
+wp option update permalink_structure '/%year%/%monthnum%/%postname%'
+
 # Activate plugins.
 if [ -n "$WORDPRESS_ACTIVATE_PLUGINS" ]; then
   wp plugin activate "$WORDPRESS_ACTIVATE_PLUGINS"
