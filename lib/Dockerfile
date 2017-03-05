@@ -20,8 +20,6 @@ RUN svn export --quiet --trust-server-cert --non-interactive https://plugins.svn
 
 RUN svn export --quiet --trust-server-cert --non-interactive https://plugins.svn.wordpress.org/wordpress-importer/trunk /usr/local/src/wordpress-plugins/wordpress-importer
 
-RUN svn export --quiet --trust-server-cert --non-interactive https://develop.svn.wordpress.org/trunk /usr/local/src/wordpress-test
-
 RUN git clone --depth=1 https://github.com/Automattic/vip-quickstart.git /usr/local/src/quickstart
 
 RUN find /usr/local/src -type d -name '.svn' -o -name '.git' | xargs rm -rf

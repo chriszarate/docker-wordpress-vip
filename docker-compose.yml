@@ -23,7 +23,6 @@ services:
       - "lib-plugins:/var/www/html/wp-content/plugins"
       - "lib-quickstart:/usr/src/quickstart"
       - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
-      - "lib-wp:/tmp/wordpress/latest"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
       - "./my-plugin:/var/www/html/wp-content/plugins/my-plugin"
       - "./my-theme:/var/www/html/wp-content/themes/vip/my-theme"
@@ -54,7 +53,6 @@ services:
       - "lib-plugins:/usr/local/src/wordpress-plugins"
       - "lib-quickstart:/usr/local/src/quickstart"
       - "lib-vip:/usr/local/src/vip-plugins"
-      - "lib-wp:/usr/local/src/wordpress-test"
   proxy:
     image: "jwilder/nginx-proxy"
     ports:
@@ -74,4 +72,3 @@ volumes:
   lib-plugins: {}
   lib-quickstart: {}
   lib-vip: {}
-  lib-wp: {}
