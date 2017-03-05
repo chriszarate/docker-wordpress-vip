@@ -6,11 +6,11 @@ services:
       context: "."
       dockerfile: "wordpress/Dockerfile"
     environment:
-      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/project"
+      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/my-theme"
       PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
       VIRTUAL_HOST: "${DOCKER_DEV_DOMAIN}"
-      WORDPRESS_ACTIVATE_PLUGINS: "" # "jetpack my-plugin" -- space-separated paths relative to /wp-content/plugins/
-      WORDPRESS_ACTIVATE_THEME: ""   # "vip/my-theme" -- theme path relative to /wp-content/themes/
+      WORDPRESS_ACTIVATE_PLUGINS: "" # "jetpack my-plugin" -- space-separated folders relative to /wp-content/plugins/
+      WORDPRESS_ACTIVATE_THEME: "" # "vip/my-theme" -- theme folder relative to /wp-content/themes/
       WORDPRESS_SITE_TITLE: "Project"
       XDEBUG_CONFIG: "remote_host=${DOCKER_LOCAL_IP} idekey=xdebug"
     depends_on:
@@ -24,7 +24,6 @@ services:
       - "lib-quickstart:/usr/src/quickstart"
       - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
-      - "./my-plugin:/var/www/html/wp-content/plugins/my-plugin"
       - "./my-theme:/var/www/html/wp-content/themes/vip/my-theme"
   mysql:
     image: "mariadb"
