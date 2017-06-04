@@ -10,6 +10,12 @@ If you only need Docker WordPress development environment for a single plugin or
 theme, my [docker-compose-wordpress][simple] repo is a simpler place to start.
 
 
+# VIP Go
+
+For a work-in-progress VIP Go environment, check out the `vip-go` branch of this
+repo.
+
+
 ## Set up
 
 **Refer to [docker-compose-wordpress][simple] for general instructions** on how to
