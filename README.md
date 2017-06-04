@@ -33,7 +33,7 @@ your changes:
 1. Mount your theme folder in `/var/www/html/wp-content/themes/vip/`.
 
 2. Add your theme to the `WORDPRESS_ACTIVATE_THEME` environment variable, using
-   a path relative to `wp-content/themes` (e.g., `vip/my-theme`).
+   a path relative to `wp-content/themes` (e.g., `my-theme`).
 
 Additionally, you have the opportunity to put project-specific WordPress config
 in `conf/wp-local-config.php` and PHP ini changes in `conf/php-local.ini`, which
