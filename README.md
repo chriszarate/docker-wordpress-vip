@@ -18,22 +18,25 @@ repo.
 
 ## Set up
 
+**NEW!**: Run `setup.sh` to check out third-party (VIP) code. You should alter
+this script to check out your organization’s code as well (see the final section
+of script). Then, adjust the `services/wordpress` section of `docker-compose.yml`
+to reflect your changes:
+
+1. Mount your theme folder in `/var/www/html/wp-content/themes/vip/`.
+
+2. Add your theme to the `WORDPRESS_ACTIVATE_THEME` environment variable, using
+   a path relative to `wp-content/themes` (e.g., `vip/my-theme`).
+
+Additionally, since this stack now includes a Photon host, you should add
+`photon.project.dev` (using your preferred TLD) to your `/etc/hosts` file.
+
 **Refer to [docker-compose-wordpress][simple] for general instructions** on how to
 interact with the stack, including WP-CLI, PHPUnit, and Xdebug.
 
 The main difference with this stack is that all code is synced to the WordPress
 container from the `src` subfolder and, generally, is assumed to be its own
 separate repo.
-
-Run `setup.sh` to check out third-party (VIP) code. You should alter this script
-to check out your organization’s code as well (see the final section of script).
-Then, adjust the `services/wordpress` section of `docker-compose.yml` to reflect
-your changes:
-
-1. Mount your theme folder in `/var/www/html/wp-content/themes/vip/`.
-
-2. Add your theme to the `WORDPRESS_ACTIVATE_THEME` environment variable, using
-   a path relative to `wp-content/themes` (e.g., `vip/my-theme`).
 
 Additionally, you have the opportunity to put project-specific WordPress config
 in `conf/wp-local-config.php` and PHP ini changes in `conf/php-local.ini`, which
