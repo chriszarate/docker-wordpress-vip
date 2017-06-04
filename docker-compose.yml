@@ -67,6 +67,7 @@ services:
           - "photon.${DOCKER_DEV_DOMAIN}"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "./conf/nginx-proxy.conf:/etc/nginx/conf.d/proxy.conf:ro"
 
 networks:
   front: {}

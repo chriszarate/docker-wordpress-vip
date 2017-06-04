@@ -31,7 +31,8 @@ your changes:
 
 Additionally, you have the opportunity to put project-specific WordPress config
 in `conf/wp-local-config.php` and PHP ini changes in `conf/php-local.ini`, which
-are synced to the container.
+are synced to the container. You may also need to adjust the Nginx config of the
+reverse proxy container via `conf/nginx-proxy.conf`.
 
 
 [vip]: https://vip.wordpress.com
