@@ -2,29 +2,43 @@ version: "2"
 
 services:
   wordpress:
-    build:
-      context: "."
-      dockerfile: "wordpress/Dockerfile"
+    image: "chriszarate/wordpress:4.7.5"
     environment:
-      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/my-theme"
+      PHOTON_DEV_HOST: "http://photon.${DOCKER_DEV_DOMAIN}"
+      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/test"
       PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
       VIRTUAL_HOST: "${DOCKER_DEV_DOMAIN}"
-      WORDPRESS_ACTIVATE_PLUGINS: "" # "jetpack my-plugin" -- space-separated folders relative to /wp-content/plugins/
-      WORDPRESS_ACTIVATE_THEME: "" # "vip/my-theme" -- theme folder relative to /wp-content/themes/
+      WORDPRESS_ACTIVATE_PLUGINS: "jetpack query-monitor" # space-separated plugin folders relative to /wp-content/plugins/
+      WORDPRESS_ACTIVATE_THEME: "vip/test" # theme folder relative to /wp-content/themes/
+      WORDPRESS_INSTALL_TYPE: "multisite"
       WORDPRESS_SITE_TITLE: "Project"
+      WORDPRESS_SITE_URL: "http://${DOCKER_DEV_DOMAIN}"
       XDEBUG_CONFIG: "remote_host=${DOCKER_LOCAL_IP} idekey=xdebug"
     depends_on:
-      - "lib"
       - "mysql"
     networks:
       - "front"
       - "back"
     volumes:
-      - "lib-plugins:/var/www/html/wp-content/plugins"
-      - "lib-quickstart:/usr/src/quickstart"
-      - "lib-vip:/var/www/html/wp-content/themes/vip/plugins"
+      - "./conf/php-local.ini:/usr/local/etc/php/conf.d/local.ini:ro"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
-      - "./my-theme:/var/www/html/wp-content/themes/vip/my-theme"
+      - "./photon/mu-plugin/photon-dev.php:/var/www/html/wp-content/mu-plugins/photon-dev.php"
+      - "./src/test-theme:/var/www/html/wp-content/themes/vip/test"
+      - "./src/vip-plugins:/var/www/html/wp-content/themes/vip/plugins"
+      - "./src/vip-quickstart/www/wp-config.php:/var/www/html/wp-config.php"
+      - "./src/vip-quickstart/www/config:/var/www/html/config"
+      - "./src/vip-quickstart/www/wp-content:/tmp/wordpress/init-wp-content"
+      - "./src/wordpress-plugins:/var/www/html/wp-content/plugins"
+  photon:
+    build:
+      context: "."
+      dockerfile: "photon/Dockerfile"
+    environment:
+      VIRTUAL_HOST: "photon.${DOCKER_DEV_DOMAIN}"
+    networks:
+      - "front"
+    volumes:
+      - "./src/vip-photon:/var/www/html"
   mysql:
     image: "mariadb"
     environment:
@@ -42,16 +56,6 @@ services:
       MYSQL_ROOT_PASSWORD: ""
     networks:
       - "back"
-  lib:
-    build:
-      context: "."
-      dockerfile: "lib/Dockerfile"
-    networks:
-      - "front"
-    volumes:
-      - "lib-plugins:/usr/local/src/wordpress-plugins"
-      - "lib-quickstart:/usr/local/src/quickstart"
-      - "lib-vip:/usr/local/src/vip-plugins"
   proxy:
     image: "jwilder/nginx-proxy"
     ports:
@@ -60,14 +64,10 @@ services:
       front:
         aliases:
           - "${DOCKER_DEV_DOMAIN}"
+          - "photon.${DOCKER_DEV_DOMAIN}"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
 
 networks:
   front: {}
   back: {}
-
-volumes:
-  lib-plugins: {}
-  lib-quickstart: {}
-  lib-vip: {}
