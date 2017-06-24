@@ -28,8 +28,8 @@ to reflect your changes:
 2. Add your theme to the `WORDPRESS_ACTIVATE_THEME` environment variable, using
    a path relative to `wp-content/themes` (e.g., `vip/my-theme`).
 
-Additionally, since this stack now includes a Photon host, you should add
-`photon.project.dev` (using your preferred TLD) to your `/etc/hosts` file.
+3. Add `project.dev` to your `/etc/hosts` file. If you choose a different TLD,
+   make sure to edit `.env` as well.
 
 **Refer to [docker-compose-wordpress][simple] for general instructions** on how to
 interact with the stack, including WP-CLI, PHPUnit, and Xdebug.

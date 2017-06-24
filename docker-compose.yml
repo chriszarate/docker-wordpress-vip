@@ -4,7 +4,6 @@ services:
   wordpress:
     image: "chriszarate/wordpress:4.7.5"
     environment:
-      PHOTON_DEV_HOST: "http://photon.${DOCKER_DEV_DOMAIN}"
       PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/test"
       PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
       VIRTUAL_HOST: "${DOCKER_DEV_DOMAIN}"
@@ -22,7 +21,6 @@ services:
     volumes:
       - "./conf/php-local.ini:/usr/local/etc/php/conf.d/local.ini:ro"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
-      - "./photon/mu-plugin/photon-dev.php:/var/www/html/wp-content/mu-plugins/photon-dev.php"
       - "./src/test-theme:/var/www/html/wp-content/themes/vip/test"
       - "./src/vip-plugins:/var/www/html/wp-content/themes/vip/plugins"
       - "./src/vip-quickstart/www/wp-config.php:/var/www/html/wp-config.php"
@@ -30,15 +28,9 @@ services:
       - "./src/vip-quickstart/www/wp-content:/tmp/wordpress/init-wp-content"
       - "./src/wordpress-plugins:/var/www/html/wp-content/plugins"
   photon:
-    build:
-      context: "."
-      dockerfile: "photon/Dockerfile"
-    environment:
-      VIRTUAL_HOST: "photon.${DOCKER_DEV_DOMAIN}"
+    image: "chriszarate/photon:latest"
     networks:
       - "front"
-    volumes:
-      - "./src/vip-photon:/var/www/html"
   mysql:
     image: "mariadb"
     environment:
@@ -64,10 +56,10 @@ services:
       front:
         aliases:
           - "${DOCKER_DEV_DOMAIN}"
-          - "photon.${DOCKER_DEV_DOMAIN}"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "./conf/nginx-proxy.conf:/etc/nginx/conf.d/proxy.conf:ro"
+      - "./conf/nginx-proxy-wordpress.conf:/etc/nginx/vhost.d/${DOCKER_DEV_DOMAIN}_location:ro"
 
 networks:
   front: {}

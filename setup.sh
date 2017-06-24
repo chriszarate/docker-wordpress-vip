@@ -25,12 +25,6 @@ do
   fi
 done
 
-# Clone Photon.
-if [ ! -d "src/vip-photon" ]; then
-  echo "Cloning Photon to \"src/vip-photon\"...."
-  svn co --quiet --trust-server-cert --non-interactive https://code.svn.wordpress.org/photon src/vip-photon
-fi
-
 # Clone VIP plugins.
 if [ ! -d "src/vip-plugins" ]; then
   echo "Cloning VIP plugins to \"src/vip-plugins\"...."
@@ -49,12 +43,6 @@ sed -i '' -e '/DB_HOST/d' -e '/WP_DEBUG/d' src/vip-quickstart/www/wp-config.php
 
 # Remove the object caching plugin, since we don't provide Memcached.
 rm -f src/vip-quickstart/www/wp-content/object-cache.php
-
-# Change flag that prevents Photon from activating in Jetpack dev mode.
-sed -i '' -e 's/Requires Connection: Yes/Requires Connection: No/1' src/wordpress-plugins/jetpack/modules/photon.php
-
-# Remove filter_var check that prevents connecting to local IP addresses (photon r436).
-sed -i '' -e 's/ *FILTER_FLAG_NO_PRIV_RANGE *|//g' src/vip-photon/index.php
 
 # Here is where you might check out your own code into the `src` subfolder. As a
 # placeholder, we'll create a test theme with the bare minimum prerequisites.
