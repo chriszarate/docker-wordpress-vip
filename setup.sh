@@ -5,6 +5,16 @@ if [ ! -f docker-compose.yml ]; then
   exit 1
 fi
 
+if [ ! -z "$(docker-compose ps | sed -e '/^\-\-\-/,$!d' -e '/^\-\-\-/d')" ]; then
+  echo "Please run \`docker-compose down\` before running this script. (You will need"
+  echo "to reimport content after this script completes.)"
+  exit 1
+fi
+
+# Make sure environment is up to date.
+echo "Updating environment...."
+git fetch && git pull
+
 # Make sure src directory exists.
 mkdir -p src/wordpress-plugins
 
@@ -26,20 +36,23 @@ do
 done
 
 # Clone VIP plugins.
-if [ ! -d "src/vip-plugins" ]; then
+if [ ! -d "src/vip-plugins/.svn" ]; then
   echo "Cloning VIP plugins to \"src/vip-plugins\"...."
+  rm -rf src/vip-plugins/
   svn co --quiet --trust-server-cert --non-interactive https://vip-svn.wordpress.com/plugins src/vip-plugins
 fi
+svn up src/vip-plugins
 
 # Clone VIP Quickstart (provides needed mu-plugins).
-if [ ! -d "src/vip-quickstart" ]; then
+if [ ! -d "src/vip-quickstart/.git" ]; then
   echo "Cloning VIP Quickstart to \"src/vip-quickstart\"...."
+  rm -rf src/vip-quickstart/
   git clone --depth=1 https://github.com/Automattic/vip-quickstart.git src/vip-quickstart
 fi
 
 # Remove some of the constants that VIP Quickstart hardcodes. If desired, supply
 # your own values in the local config.
-sed -i '' -e '/DB_HOST/d' -e '/WP_DEBUG/d' src/vip-quickstart/www/wp-config.php
+sed -i.bak -e '/DB_HOST/d' -e '/WP_DEBUG/d' src/vip-quickstart/www/wp-config.php
 
 # Remove the object caching plugin, since we don't provide Memcached.
 rm -f src/vip-quickstart/www/wp-content/object-cache.php
@@ -47,4 +60,9 @@ rm -f src/vip-quickstart/www/wp-content/object-cache.php
 # Here is where you might check out your own code into the `src` subfolder. As a
 # placeholder, we'll create a test theme with the bare minimum prerequisites.
 mkdir -p src/test-theme
-touch src/test-theme/index.php src/test-theme/style.css
+touch src/test-theme/style.css
+echo "Hello!" > src/test-theme/index.php
+
+# Done!
+echo ""
+echo "Done! You are ready to run \`docker-compose up -d\`."

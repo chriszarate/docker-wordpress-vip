@@ -2,13 +2,13 @@ version: "2"
 
 services:
   wordpress:
-    image: "chriszarate/wordpress:4.7.5"
+    image: "chriszarate/wordpress:4.8.0"
     environment:
-      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/test"
+      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/project"
       PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
       VIRTUAL_HOST: "${DOCKER_DEV_DOMAIN}"
-      WORDPRESS_ACTIVATE_PLUGINS: "jetpack query-monitor" # space-separated plugin folders relative to /wp-content/plugins/
-      WORDPRESS_ACTIVATE_THEME: "vip/test" # theme folder relative to /wp-content/themes/
+      WORDPRESS_ACTIVATE_PLUGINS: "jetpack log-deprecated-notices query-monitor rewrite-rules-inspector wordpress-importer"
+      WORDPRESS_ACTIVATE_THEME: "vip/project"
       WORDPRESS_INSTALL_TYPE: "multisite"
       WORDPRESS_SITE_TITLE: "Project"
       WORDPRESS_SITE_URL: "http://${DOCKER_DEV_DOMAIN}"
@@ -21,7 +21,7 @@ services:
     volumes:
       - "./conf/php-local.ini:/usr/local/etc/php/conf.d/local.ini:ro"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
-      - "./src/test-theme:/var/www/html/wp-content/themes/vip/test"
+      - "./src/test-theme:/var/www/html/wp-content/themes/vip/project"
       - "./src/vip-plugins:/var/www/html/wp-content/themes/vip/plugins"
       - "./src/vip-quickstart/www/wp-config.php:/var/www/html/wp-config.php"
       - "./src/vip-quickstart/www/config:/var/www/html/config"
@@ -32,7 +32,7 @@ services:
     networks:
       - "front"
   mysql:
-    image: "mariadb"
+    image: "mariadb:10.2"
     environment:
       MYSQL_DATABASE: "wordpress"
       MYSQL_USER: "wordpress"
@@ -41,7 +41,7 @@ services:
     networks:
       - "back"
   mysql_phpunit:
-    image: "mariadb"
+    image: "mariadb:10.2"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: "wordpress_phpunit"
@@ -49,7 +49,7 @@ services:
     networks:
       - "back"
   proxy:
-    image: "jwilder/nginx-proxy"
+    image: "jwilder/nginx-proxy:alpine"
     ports:
       - "80:80"
     networks:
