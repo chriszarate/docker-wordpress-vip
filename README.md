@@ -12,54 +12,83 @@ theme, my [docker-compose-wordpress][simple] repo is a simpler place to start.
 
 # VIP Go
 
-For a work-in-progress VIP Go environment, check out the `vip-go` branch of this
-repo.
+For an environment suitable for VIP Go development, check out my
+[docker-wordpress-vip-go][vip-go] repo.
 
 
 ## Set up
 
-**NEW!**: Run `setup.sh` to check out third-party (VIP) code. You should alter
-this script to check out your organization’s code as well (see the final section
-of script). Then, adjust the `services/wordpress` section of `docker-compose.yml`
-to reflect your changes:
+1. Add `project.dev` (or your chosen TLD) to your `/etc/hosts` file:
 
-1. Mount your theme folder in `/var/www/html/wp-content/themes/vip/`.
+   ```
+   127.0.0.1 localhost project.dev
+   ```
 
-2. Add your theme to the `WORDPRESS_ACTIVATE_THEME` environment variable, using
-   a path relative to `wp-content/themes` (e.g., `vip/my-theme`).
+   If you choose a different TLD, edit `.env` as well.
 
-3. Add `project.dev` to your `/etc/hosts` file. If you choose a different TLD,
-   make sure to edit `.env` as well.
+2. Edit `setup.sh` to check out your organization’s code into the `src`
+   subfolder (look for `test-theme` in the final section). Then, adjust the
+   `services/wordpress/volumes` section of `docker-compose.yml` to reflect your
+   changes.
 
-**Refer to [docker-compose-wordpress][simple] for general instructions** on how to
-interact with the stack, including WP-CLI, PHPUnit, and Xdebug.
+3. Run `./setup.sh`.
+
+4. Run `docker-compose up -d`.
+
+
+## Interacting with containers
+
+**Refer to [docker-compose-wordpress][simple] for general instructions** on how
+to interact with the stack, including WP-CLI, PHPUnit, Xdebug, and preloading
+content.
 
 The main difference with this stack is that all code is synced to the WordPress
 container from the `src` subfolder and, generally, is assumed to be its own
 separate repo.
 
-Additionally, you have the opportunity to put project-specific WordPress config
-in `conf/wp-local-config.php` and PHP ini changes in `conf/php-local.ini`, which
-are synced to the container. You may also need to adjust the Nginx config of the
-reverse proxy container via `conf/nginx-proxy.conf`.
+
+## Configuration
+
+Put project-specific WordPress config in `conf/wp-local-config.php` and PHP ini
+changes in `conf/php-local.ini`, which are synced to the container. PHP ini
+changes are only reflected when the container restarts. You may also adjust the
+Nginx config of the reverse proxy container via `conf/nginx-proxy.conf`.
 
 
-## TLS / SSL support
+## Photon
 
-Run `./certs/create-certs.sh` to generate self-signed certificates. Optionally,
-you may wish to add the generated root certificate to your system’s trusted root
-certificates. This will allow you to browse your dev environment over HTTPS
-without accepting a browser security warning. On OS X:
+A [Photon][photon] server is included and enabled by default to more closely
+mimic the WordPress VIP production environment. Requests to `/wp-content/uploads`
+will be proxied to the Photon container—simply append Photon-compatible query
+string parameters to the URL.
+
+
+## HTTPS support
+
+This repo provide HTTPS support out of the box. The setup script generates
+self-signed certificates for the domain specified in `.env`. You may wish to add
+the generated root certificate to your system’s trusted root certificates. This
+will allow you to browse your dev environment over HTTPS without accepting a
+browser security warning. On OS X:
 
 ```sh
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/ca-root/ca.crt
 ```
 
-Next, uncomment the cert-related lines in `docker-compose.yml` and restart the
-stack (`docker-compose stop`, `docker-compose up -d`).
+If you do not want to use HTTPS, add `HTTPS_METHOD: "nohttps"` to the
+`services/proxy/environment` section of `docker-compose.yml`.
+
+
+## Multiple environments
+
+Multiple instances of this dev environment are possible. Make an additional copy
+of this repo with a different folder name. Then, either juggle them by stopping
+one and starting another, or modify `/etc/hosts` and `.env` to use another
+domain, e.g., `project2.dev`.
 
 
 [vip]: https://vip.wordpress.com
 [photon]: https://jetpack.com/support/photon/
 [image]: https://hub.docker.com/r/chriszarate/wordpress/
 [simple]: https://github.com/chriszarate/docker-compose-wordpress
+[vip-go]: https://github.com/chriszarate/docker-wordpress-vip-go
