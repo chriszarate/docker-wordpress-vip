@@ -57,6 +57,9 @@ sed -i.bak -e '/DB_HOST/d' -e '/WP_DEBUG/d' src/vip-quickstart/www/wp-config.php
 # Remove the object caching plugin, since we don't provide Memcached.
 rm -f src/vip-quickstart/www/wp-content/object-cache.php
 
+# Make sure self-signed TLS certificates exist.
+./certs/create-certs.sh
+
 # Here is where you might check out your own code into the `src` subfolder. As a
 # placeholder, we'll create a test theme with the bare minimum prerequisites.
 mkdir -p src/test-theme

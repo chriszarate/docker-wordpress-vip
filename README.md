@@ -44,6 +44,21 @@ are synced to the container. You may also need to adjust the Nginx config of the
 reverse proxy container via `conf/nginx-proxy.conf`.
 
 
+## TLS / SSL support
+
+Run `./certs/create-certs.sh` to generate self-signed certificates. Optionally,
+you may wish to add the generated root certificate to your system’s trusted root
+certificates. This will allow you to browse your dev environment over HTTPS
+without accepting a browser security warning. On OS X:
+
+```sh
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/ca-root/ca.crt
+```
+
+Next, uncomment the cert-related lines in `docker-compose.yml` and restart the
+stack (`docker-compose stop`, `docker-compose up -d`).
+
+
 [vip]: https://vip.wordpress.com
 [photon]: https://jetpack.com/support/photon/
 [image]: https://hub.docker.com/r/chriszarate/wordpress/

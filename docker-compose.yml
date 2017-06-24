@@ -19,6 +19,7 @@ services:
       - "front"
       - "back"
     volumes:
+      - "./certs/ca-root/ca.crt:/tmp/certs/root.crt:ro"
       - "./conf/php-local.ini:/usr/local/etc/php/conf.d/local.ini:ro"
       - "./conf/wp-local-config.php:/var/www/html/local-config.php:ro"
       - "./src/test-theme:/var/www/html/wp-content/themes/vip/project"
@@ -52,12 +53,14 @@ services:
     image: "jwilder/nginx-proxy:alpine"
     ports:
       - "80:80"
+      - "443:443"
     networks:
       front:
         aliases:
           - "${DOCKER_DEV_DOMAIN}"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "./certs/self-signed:/etc/nginx/certs:ro"
       - "./conf/nginx-proxy.conf:/etc/nginx/conf.d/proxy.conf:ro"
       - "./conf/nginx-proxy-wordpress.conf:/etc/nginx/vhost.d/${DOCKER_DEV_DOMAIN}_location:ro"
 
