@@ -4,8 +4,6 @@ services:
   wordpress:
     image: "chriszarate/wordpress:4.8.1"
     environment:
-      PHPUNIT_TEST_DIR: "/var/www/html/wp-content/themes/vip/project"
-      PHPUNIT_WP_CONTENT_LINKS: "plugins/jetpack themes/vip/plugins"
       VIRTUAL_HOST: "${DOCKER_DEV_DOMAIN}"
       WORDPRESS_ACTIVATE_PLUGINS: "jetpack log-deprecated-notices query-monitor rewrite-rules-inspector wordpress-importer"
       WORDPRESS_ACTIVATE_THEME: "vip/project"
@@ -39,14 +37,6 @@ services:
       MYSQL_USER: "wordpress"
       MYSQL_PASSWORD: "wordpress"
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-    networks:
-      - "back"
-  mysql_phpunit:
-    image: "mariadb:10.2"
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: "wordpress_phpunit"
-      MYSQL_ROOT_PASSWORD: ""
     networks:
       - "back"
   proxy:

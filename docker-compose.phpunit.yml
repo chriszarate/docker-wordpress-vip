@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+  wordpress_phpunit:
+    image: "chriszarate/wordpress-phpunit:6.0.6"
+    volumes:
+      - "./src/test-theme:/app"
+      - "testsuite:/tmp"
+  mysql_phpunit:
+    image: "mariadb:10.2"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+
+volumes:
+  testsuite: {}
