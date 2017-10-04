@@ -18,10 +18,10 @@ For an environment suitable for VIP Go development, check out my
 
 ## Set up
 
-1. Add `project.dev` (or your chosen TLD) to your `/etc/hosts` file:
+1. Add `project.test` (or your chosen TLD) to your `/etc/hosts` file:
 
    ```
-   127.0.0.1 localhost project.dev
+   127.0.0.1 localhost project.test
    ```
 
    If you choose a different TLD, edit `.env` as well.
@@ -84,7 +84,7 @@ If you do not want to use HTTPS, add `HTTPS_METHOD: "nohttps"` to the
 Multiple instances of this dev environment are possible. Make an additional copy
 of this repo with a different folder name. Then, either juggle them by stopping
 one and starting another, or modify `/etc/hosts` and `.env` to use another
-domain, e.g., `project2.dev`.
+domain, e.g., `project2.test`.
 
 
 [vip]: https://vip.wordpress.com
