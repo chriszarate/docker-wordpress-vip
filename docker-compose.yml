@@ -41,6 +41,8 @@ services:
       - "back"
   proxy:
     image: "jwilder/nginx-proxy:alpine"
+    environment:
+      HSTS: "off"
     ports:
       - "80:80"
       - "443:443"
