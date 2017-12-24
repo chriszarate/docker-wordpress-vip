@@ -119,6 +119,8 @@ your `wordpress` container fails on `wp core install` or `wp plugin activate`,
 that usually means that code you are syncing to the container produces a fatal
 error that prevents WP-CLI from running.
 
+Running `setup.sh` again can also help resolve problems.
+
 If your self-signed certs have expired (`ERR_CERT_DATE_INVALID`), simply delete
 the `certs/self-signed` directory and run `./certs/create-certs.sh`.
 

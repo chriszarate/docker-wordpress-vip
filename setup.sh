@@ -13,7 +13,7 @@ fi
 
 # Make sure environment is up to date.
 echo "Updating environment...."
-git fetch && git pull
+git fetch && git pull && echo ""
 
 # Make sure src directory exists.
 mkdir -p src/wordpress-plugins
@@ -33,6 +33,8 @@ do
     echo "Cloning $repo in the \"src/wordpress-plugins\" subfolder...."
     svn co --quiet --trust-server-cert --non-interactive https://plugins.svn.wordpress.org/$repo/trunk src/wordpress-plugins/${repo}
   fi
+  svn up src/wordpress-plugins/${repo}
+  echo ""
 done
 
 # Clone VIP plugins.
@@ -42,20 +44,25 @@ if [ ! -d "src/vip-plugins/.svn" ]; then
   svn co --quiet --trust-server-cert --non-interactive https://vip-svn.wordpress.com/plugins src/vip-plugins
 fi
 svn up src/vip-plugins
+echo ""
 
-# Clone VIP Quickstart (provides needed mu-plugins).
-if [ ! -d "src/vip-quickstart/.git" ]; then
-  echo "Cloning VIP Quickstart to \"src/vip-quickstart\"...."
-  rm -rf src/vip-quickstart/
-  git clone --depth=1 https://github.com/Automattic/vip-quickstart.git src/vip-quickstart
-fi
+# Clone git repos (VIP Quickstart provides needed mu-plugins).
+for repo in \
+  Automattic/vip-quickstart \
+  tollmanz/wordpress-pecl-memcached-object-cache
+do
+  # Clone repo if it is not in the "src" subfolder.
+  if [ ! -d "src/${repo##*/}/.git" ]; then
+    echo "Cloning $repo in the \"src\" subfolder...."
+    rm -rf src/${repo##*/}
+    git clone --depth=1 git@github.com:$repo src/${repo##*/}
+  fi
 
-# Clone Memcached drop-in.
-if [ ! -d "src/memcached-object-cache/.git" ]; then
-  echo "Cloning Memcached object cache to \"src/memcached-object-cache\"...."
-  rm -rf src/memcached-object-cache/
-  git clone --depth=1 https://github.com/tollmanz/wordpress-pecl-memcached-object-cache.git src/memcached-object-cache
-fi
+  # Make sure repos are up-to-date.
+  echo "Updating ${repo##*/}...."
+  git --git-dir=src/${repo##*/}/.git --work-tree=src/${repo##*/} pull --ff-only
+  echo ""
+done
 
 # Remove some of the constants that VIP Quickstart hardcodes. If desired, supply
 # your own values in the local config.
