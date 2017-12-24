@@ -87,6 +87,30 @@ one and starting another, or modify `/etc/hosts` and `.env` to use another
 domain, e.g., `project2.test`.
 
 
+## Troubleshooting
+
+If your stack is not responding, the most likely cause is that a container has
+stopped or failed to start. Check to see if all of the containers are "Up":
+
+```
+docker-compose ps
+```
+
+If not, inspect the logs for that container, e.g.:
+
+```
+docker-compose logs wordpress
+```
+
+Usually, the error is apparent in the logs or the last task that ran failed. If
+your `wordpress` container fails on `wp core install` or `wp plugin activate`,
+that usually means that code you are syncing to the container produces a fatal
+error that prevents WP-CLI from running.
+
+If your self-signed certs have expired (`ERR_CERT_DATE_INVALID`), simply delete
+the `certs/self-signed` directory and run `./certs/create-certs.sh`.
+
+
 [vip]: https://vip.wordpress.com
 [photon]: https://jetpack.com/support/photon/
 [image]: https://hub.docker.com/r/chriszarate/wordpress/
