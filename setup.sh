@@ -50,11 +50,19 @@ if [ ! -d "src/vip-quickstart/.git" ]; then
   git clone --depth=1 https://github.com/Automattic/vip-quickstart.git src/vip-quickstart
 fi
 
+# Clone Memcached drop-in.
+if [ ! -d "src/memcached-object-cache/.git" ]; then
+  echo "Cloning Memcached object cache to \"src/memcached-object-cache\"...."
+  rm -rf src/memcached-object-cache/
+  git clone --depth=1 https://github.com/tollmanz/wordpress-pecl-memcached-object-cache.git src/memcached-object-cache
+fi
+
 # Remove some of the constants that VIP Quickstart hardcodes. If desired, supply
 # your own values in the local config.
 sed -i.bak -e '/DB_HOST/d' -e '/WP_DEBUG/d' src/vip-quickstart/www/wp-config.php
 
-# Remove the object caching plugin, since we don't provide Memcached.
+# Remove the default object caching plugin, since we will want to provide it
+# conditionally if Memcached is provided.
 rm -f src/vip-quickstart/www/wp-content/object-cache.php
 
 # Make sure self-signed TLS certificates exist.
