@@ -63,6 +63,18 @@ will be proxied to the Photon container—simply append Photon-compatible query
 string parameters to the URL.
 
 
+## Memcached
+
+A Memcached server and `object-cache.php` drop-in are available via the separate
+`docker-compose.memcached.yml` but are not enabled by default. To use it, either
+manually merge it into the main `docker-compose.yml` or reference it explicitly
+when interacting with the stack:
+
+```
+docker-compose -f docker-compose.yml -f docker-compose.memcached.yml up -d
+```
+
+
 ## HTTPS support
 
 This repo provide HTTPS support out of the box. The setup script generates
